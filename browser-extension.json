@@ -1,0 +1,9 @@
+{
+  "allowDirectMerges": false,
+  "allowBotCommands": false,
+  "internalRepository": "fbsource",
+  "cannedReplies": {
+    "Feature Request": "This feature request doesn't appear to be actively being worked on. We would happily consider a pull request implementing it. If you plan to work on this issue let us know in the comments and we will re-open the issue and assign it to you. If you feel strongly that this issue deserves more attention, please comment here with your use-case and we will try to prioritize as appropriate.",
+    "Human Timeout": "This issue has been waiting for more info for more than 2 weeks. I'm closing it for now, but feel free to re-open it if you wish to discuss this further"
+  }
+}
