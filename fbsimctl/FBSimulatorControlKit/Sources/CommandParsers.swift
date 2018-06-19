@@ -1107,12 +1107,50 @@ struct FBProcessLaunchConfigurationParsers {
       )
       .fmap { output, waitForDebugger, bundleIDOrApplicationDescriptor, arguments in
         let (bundleId, appDescriptor) = bundleIDOrApplicationDescriptor
+        
+        let filteredArguments = arguments.filter({ !$0.contains("--environment") })
+        let envArguments = arguments.filter({ $0.contains("--environment") })
+        
+        var env: [String:String] = [:]
+        
+        for envString in envArguments {
+            var trimmedString = envString.replacingOccurrences(of: "--environment=", with: "").trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+            
+            if trimmedString.count == 0 {
+                continue
+            }
+            
+            if trimmedString.prefix(1) == "\"" && trimmedString.suffix(1) == "\"" {
+                trimmedString = String(trimmedString.substring(with: trimmedString.index(trimmedString.startIndex, offsetBy: 1)..<trimmedString.index(trimmedString.startIndex, offsetBy: trimmedString.count - 2)))
+            }
+            
+            var eqFound = false
+            var key = ""
+            var value = ""
+            
+            for c in trimmedString {
+                if !eqFound && c == "=" {
+                    eqFound = true
+                    
+                    continue
+                }
+                
+                if !eqFound {
+                    key += String(c)
+                } else {
+                    value += String(c)
+                }
+            }
+            
+            env[key] = value
+        }
+        
         return (
           FBApplicationLaunchConfiguration(
             bundleID: bundleId,
             bundleName: nil,
-            arguments: arguments,
-            environment: [:],
+            arguments: filteredArguments,
+            environment: env,
             waitForDebugger: waitForDebugger,
             output: output),
           appDescriptor
